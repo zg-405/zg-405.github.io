@@ -1,0 +1,329 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+
+<head>
+    <!--Setting-->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <meta http-equiv="Cache-Control" content="no-siteapp">
+    <meta http-equiv="Cache-Control" content="no-transform">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta name="apple-mobile-web-app-capable" content="AirCloud Blog">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="format-detection" content="telephone=no,email=no,adress=no">
+    <meta name="browsermode" content="application">
+    <meta name="screen-orientation" content="portrait">
+    <meta name="theme-version" content="1.2.3">
+    <meta name="root" content="/">
+    <link rel="dns-prefetch" href="http://niexiaotao.cn">
+    <!--SEO-->
+
+<meta name="keywords" content="OpenCV" />
+
+
+<meta name="description" content="本问就 Mac 系统安装 OpenCV 以及实现一个简单的人脸识别程序进行记录。
+安装 OpenCV实际上，OpenCV 的安装方式比较多，这里为了避免一些第三方安装的问题，我们采用源代码方式安..." />
+
+
+<meta name="robots" content="all" />
+<meta name="google" content="all" />
+<meta name="googlebot" content="all" />
+<meta name="verify" content="all" />
+    <!--Title-->
+
+<title>
+    
+    使用 OpenCV 实现简单的人脸识别程序 |
+    
+    AirCloud Blog
+</title>
+
+<link rel="alternate" href="/atom.xml" title="AirCloud Blog" type="application/atom+xml">
+
+
+<link rel="icon" href="/favicon.ico">
+
+    
+
+<link rel="stylesheet" href="/css/bootstrap.min.css?rev=3.3.7">
+<link rel="stylesheet" href="/css/font-awesome.min.css?rev=4.7.0">
+<link rel="stylesheet" href="/css/style.css?rev=@@hash">
+    
+<div class="hide">
+    <script type="text/javascript">
+    var cnzz_protocol = (("https:" == document.location.protocol) ? " https://" : " http://");
+    document.write(unescape("%3Cspan class='cnzz_stat_icon_1263868967 hide' %3E%3Cscript%20src%3D%22https%3A%2F%2Fs95.cnzz.com%2Fz_stat.php%3Fweb_id%3D1272564536%22%3E%3C%2Fscript%3E%3C/span%3E%3Cscript src='" + cnzz_protocol + "s19.cnzz.com/z_stat.php%3Fid%3D1263868967%26show%3Dpic1' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+</div>
+
+
+
+
+    
+
+</head>
+<!--[if lte IE 8]>
+<style>
+    html{ font-size: 1em }
+</style>
+<![endif]-->
+<!--[if lte IE 9]>
+<div style="ie">你使用的浏览器版本过低，为了你更好的阅读体验，请更新浏览器的版本或者使用其他现代浏览器，比如Chrome、Firefox、Safari等。</div>
+<![endif]-->
+<body>
+    <header class="main-header"  style="background-image:url(
+    http://snippet.shenliyang.com/img/banner.jpg)"
+     >
+    <div class="main-header-box">
+        <a class="header-avatar" href="/" title='Xiaotao Nie'>
+            <img src="/img/avatar.jpg" alt="logo头像" class="img-responsive center-block">
+        </a>
+        <div class="branding">
+            <!--<h2 class="text-hide">Snippet主题,从未如此简单有趣</h2>-->
+            
+            <img src="/img/branding.png" alt="Snippet 博客主题" class="img-responsive center-block">
+            
+        </div>
+    </div>
+</header>
+    <nav class="main-navigation">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="navbar-header"><span class="nav-toggle-button collapsed pull-right" data-toggle="collapse" data-target="#main-menu" id="mnav">
+                        <span class="sr-only"></span>
+                        <i class="fa fa-bars"></i>
+                    </span>
+                    <a class="navbar-brand" href="http://niexiaotao.cn">
+                        AirCloud Blog</a>
+                </div>
+                <div class="collapse navbar-collapse" id="main-menu">
+                    <ul class="menu">
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/"><i class="fa "></i>
+                                Home</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/前端/"><i class="fa "></i>
+                                前端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/后端/"><i class="fa "></i>
+                                后端</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/categories/工具/"><i class="fa "></i>
+                                工具</a>
+                        </li>
+                        
+                        <li role="presentation" class="text-center">
+                            <a href="/archives/"><i class="fa "></i>
+                                时间轴</a>
+                        </li>
+                        
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+    <section class="content-wrap">
+        <div class="container">
+            <div class="row">
+                <main class="col-md-8 main-content m-post">
+                    <p id="process"></p>
+<article class="post">
+    <div class="post-head">
+        <h1 id="使用 OpenCV 实现简单的人脸识别程序">
+            
+            使用 OpenCV 实现简单的人脸识别程序
+            
+        </h1>
+        <div class="post-meta">
+    
+    <span class="categories-meta fa-wrap">
+        <i class="fa fa-folder-open-o"></i>
+        
+    </span>
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-tags"></i>
+        <span class="tags-meta">
+            
+            <a class="tag-link" href="/tags/OpenCV/">OpenCV</a>
+            
+        </span>
+    </span>
+    
+    
+    
+    <span class="fa-wrap">
+        <i class="fa fa-clock-o"></i>
+        <span class="date-meta">
+            2019/09/10</span>
+    </span>
+    
+    
+</div>
+        
+        
+        <p class="fa fa-exclamation-triangle warning">
+            本文于<strong>
+                303</strong>
+            天之前发表，文中内容可能已经过时。
+        </p>
+        
+    </div>
+    
+    <div class="post-body post-content">
+        <p>本问就 Mac 系统安装 OpenCV 以及实现一个简单的人脸识别程序进行记录。</p>
+<h3 id="安装-OpenCV"><a href="#安装-OpenCV" class="headerlink" title="安装 OpenCV"></a>安装 OpenCV</h3><p>实际上，OpenCV 的安装方式比较多，这里为了避免一些第三方安装的问题，我们采用源代码方式安装。</p>
+<p>安全前请确保本机已经安装了 CMake 和 Xcode。</p>
+<p>我们去<a href="https://opencv.org/releases/" target="_blank" rel="noopener"> OpenCV 的网站</a> 下载源代码，选择 Release -&gt; SourceCode，可以选择最新的 4.11 版本。</p>
+<p>这里以 4.1.1 版本为例，下载后我们解压到 <code>opencv-4.1.1</code>，然后进入到该目录，新建一个 release 目录用于存放我们构建好的内容，并进入到该目录：</p>
+<figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> <span class="built_in">release</span></span><br><span class="line">cd <span class="built_in">release</span>/</span><br></pre></td></tr></table></figure>
+<p>然后我们依次执行以下命令安装：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">cmake -G “Unix Makefiles” .. </span><br><span class="line"><span class="built_in">make</span></span><br><span class="line"><span class="built_in">make</span> install</span><br></pre></td></tr></table></figure>
+<p>全部命令执行成功后，实际上就安装完成了，我们可以从最后的输出中看到，相关内容已经被安装到了 <code>/usr/local/include</code>、<code>/usr/local/lib</code> 等文件夹下。</p>
+<h3 id="使用-Xcode-编写人脸识别程序"><a href="#使用-Xcode-编写人脸识别程序" class="headerlink" title="使用 Xcode 编写人脸识别程序"></a>使用 Xcode 编写人脸识别程序</h3><p>我们可以使用 Xcode 建立一个命令行程序，这里我们还需要处理两个问题：</p>
+<ul>
+<li>OpenCV 的引入</li>
+<li>摄像头权限的获取</li>
+</ul>
+<h4 id="OpenCV-的引入"><a href="#OpenCV-的引入" class="headerlink" title="OpenCV 的引入"></a>OpenCV 的引入</h4><p>对于第一点，我们在 <strong>Build Setting</strong> 的 <strong>Search Paths</strong> 中增加 Header 和 Library 的路径：</p>
+<p><img src="/img/cv1.jpg" alt="路径"></p>
+<p>然后我们需要在 <strong>Build Phases</strong> 的 <strong>Link Binary With Libraries</strong> 中增加动态链接库。</p>
+<p>我们可以点击左下角加号，选择 <code>Add Others</code> 然后进入 <code>/usr/local/lib</code> 把 OpenCV 相关的库均包含进来即可。</p>
+<blockquote>
+<p>实际上我们可以部分引入，但是由于我们是初步上手，全部引入也可以。</p>
+</blockquote>
+<h4 id="摄像头权限的获取"><a href="#摄像头权限的获取" class="headerlink" title="摄像头权限的获取"></a>摄像头权限的获取</h4><p>这里如果我们直接运行我们的程序，在 macOS 最新的系统中是无法运行通过的，这里涉及到摄像头权限问题。</p>
+<p>一般来说，对于 macOS，我们需要在运行程序的目录下声明 <code>info.plist</code>, 这样程序在运行的时候系统会自动有申请权限的弹窗，对于我们测试场景下而言，我们可以这样做：</p>
+<ul>
+<li>进入我们 Product 存放的目录（注意不是项目代码目录，可以在 Products 条目右单击 <code>Show in Finder</code>）</li>
+<li>复制一个 info.plist（这里我们可以随便找一个本地安装的应用程序的 info.plist，一般右单击显示包内容即可看到）</li>
+<li>在 info.plist 中增加 <code>NSCameraUsageDescription</code>，value 即提示语，可以写比如 <code>摄像头权限的获取</code>。</li>
+</ul>
+<h4 id="书写并运行程序"><a href="#书写并运行程序" class="headerlink" title="书写并运行程序"></a>书写并运行程序</h4><p>做完上述准备工作后，我们可以写我们的人脸识别程序了，这里给出一个成功运行的代码示例（参考了网上的一些例子）：</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;opencv2/opencv.hpp&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> cv;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">capture</span><span class="params">()</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 是否退出摄像头抓取线程</span></span><br><span class="line"><span class="keyword">static</span> <span class="keyword">bool</span> g_quit = <span class="literal">false</span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">char</span>** argv)</span> </span>&#123;</span><br><span class="line">    capture();</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">capture</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="comment">// 打开摄像头</span></span><br><span class="line">    cv::<span class="function">VideoCapture <span class="title">cap</span><span class="params">(<span class="number">0</span>)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 如果打开失败，返回错误</span></span><br><span class="line">    <span class="keyword">if</span> (!cap.isOpened())</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">cout</span>&lt;&lt;<span class="string">"Open Capture Failed"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">        <span class="keyword">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 人脸识别分类器</span></span><br><span class="line">    cv::<span class="function">CascadeClassifier <span class="title">faceCascadeClassifier</span><span class="params">(<span class="string">"/usr/local/share/opencv4/haarcascades/haarcascade_frontalface_alt2.xml"</span>)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 读取 Frame ，直到退出系统</span></span><br><span class="line">    <span class="keyword">while</span> (!g_quit)</span><br><span class="line">    &#123;</span><br><span class="line">        cv::Mat frame;</span><br><span class="line">        <span class="keyword">if</span> (!cap.read(frame))</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="comment">// 读取失败，返回错误</span></span><br><span class="line">            <span class="keyword">break</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 进行人脸识别</span></span><br><span class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;cv::Rect&gt; faces;</span><br><span class="line">        faceCascadeClassifier.detectMultiScale(frame, faces);</span><br><span class="line">        <span class="comment">// 将人脸识别结果绘制到图片上</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; face : faces)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="built_in">cout</span>&lt;&lt;<span class="string">"Find Face"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line">            cv::rectangle(frame,</span><br><span class="line">                          cv::Point(face.x, face.y),</span><br><span class="line">                          cv::Point(face.x + face.width, face.y + face.height),</span><br><span class="line">                          CV_RGB(<span class="number">255</span>, <span class="number">0</span>, <span class="number">0</span>),</span><br><span class="line">                          <span class="number">2</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        imshow(<span class="string">"Display Image"</span>, frame);</span><br><span class="line">        waitKey(<span class="number">100</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>这里值得注意的是，我们这里使用的人脸识别分类器是 OpenCV 安装后自带的，你本机的目录可能并不是这一个（这个路径实际上安装好 OpenCV 之后会打印在控制台）。</p>
+<p>正常情况下，以上程序可以直接编译执行。</p>
+
+    </div>
+    
+    <div class="post-footer">
+        <div>
+            
+            转载声明：
+            商业转载请联系作者获得授权,非商业转载请注明出处 © <a href="" target="_blank">Snippet</a>
+            
+            
+        </div>
+        <div>
+            
+        </div>
+    </div>
+</article>
+<div class="article-nav prev-next-wrap clearfix">
+    
+    <a href="/2020/06/26/使用RustWebAssembly0拷贝进行计算加速/" class="pre-post btn btn-default" title='使用 Rust WebAssembly 0拷贝进行计算加速'>
+        <i class="fa fa-angle-left fa-fw"></i><span class="hidden-lg">上一篇</span>
+        <span class="hidden-xs">
+            使用 Rust WebAssembly 0拷贝进行计算加速</span>
+    </a>
+    
+    
+    <a href="/2019/09/07/Rust初探-实现二叉树的增删与遍历/" class="next-post btn btn-default" title='Rust初探:实现二叉树的增删与遍历'>
+        <span class="hidden-lg">下一篇</span>
+        <span class="hidden-xs">
+            Rust初探:实现二叉树的增删与遍历</span><i class="fa fa-angle-right fa-fw"></i>
+    </a>
+    
+</div>
+
+<div id="comments">
+    
+
+<div id="vcomments" class="valine"></div>
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="/assets/valine.min.js"></script>
+<script>
+new Valine({
+    av: AV,
+    el: '#vcomments',
+    appId: 'xOKV9J4UeQAtVkvnJC7Kq2Jn-gzGzoHsz',
+    appKey: 'erIpQac4azoCmgfBB7Dl9maa',
+    placeholder: '说点什么吧',
+    notify: false,
+    verify: true,
+    avatar: 'mm',
+    meta: 'nick,mail'.split(','),
+    pageSize: '10',
+    path: window.location.pathname,
+    lang: 'zh'.toLowerCase()
+})
+</script>
+
+
+</div>
+
+                </main>
+                
+                    <aside id="article-toc" role="navigation" class="col-md-4">
+    <div class="widget">
+        <h3 class="title">
+            Table of Contents
+        </h3>
+        
+        <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#安装-OpenCV"><span class="toc-text">安装 OpenCV</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#使用-Xcode-编写人脸识别程序"><span class="toc-text">使用 Xcode 编写人脸识别程序</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#OpenCV-的引入"><span class="toc-text">OpenCV 的引入</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#摄像头权限的获取"><span class="toc-text">摄像头权限的获取</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#书写并运行程序"><span class="toc-text">书写并运行程序</span></a></li></ol></li></ol>
+        
+    </div>
+</aside>
+                
+            </div>
+        </div>
+    </section>
+    <footer class="main-footer">
+    <div class="container">
+        <div class="row">
+        </div>
+    </div>
+</footer>
+<a id="back-to-top" class="icon-btn hide">
+    <i class="fa fa-chevron-up"></i>
+</a>
+    <div class="copyright">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-12">
+                <div class="busuanzi">
+    
+</div>
+            </div>
+            <div class="col-sm-12">
+                <span>Copyright &copy;
+                    2017
+                    
+                </span> |
+                <span>
+                    Powered by <a href="//hexo.io" class="copyright-links" target="_blank" rel="nofollow">Hexo</a>
+                </span> |
+                <span>
+                    Theme by <a href="//github.com/shenliyang/hexo-theme-snippet.git" class="copyright-links" target="_blank" rel="nofollow">Snippet</a>
+                </span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<script src="/js/app.js?rev=@@hash"></script>
+</body>
+</html>
